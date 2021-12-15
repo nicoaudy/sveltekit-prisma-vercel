@@ -1,10 +1,6 @@
-import Prisma from '@prisma/client';
-
-const prisma = new Prisma.PrismaClient();
+import { prisma } from '$lib/prisma';
 
 export async function put(request) {
-	await prisma.$connect();
-
 	const { id } = request.params;
 	const row = await prisma.todo.findUnique({ where: { id: parseInt(id) } });
 	const data = await prisma.todo.update({ where: { id: row.id }, data: { done: !row.done } });
@@ -19,8 +15,6 @@ export async function put(request) {
 }
 
 export async function del(request) {
-	await prisma.$connect();
-
 	const { id } = request.params;
 	await prisma.todo.delete({ where: { id: parseInt(id) } });
 
