@@ -16,13 +16,29 @@
 			body: new FormData(e.target)
 		});
 
-		setTimeout(() => (loading = false), 3000);
+		getTodos();
+		loading = false;
 	}
 
 	async function getTodos() {
 		const response = await fetch('/api/todos.json');
 		const result = await response.json();
-		console.log(result);
+
+		todos = result.data;
+	}
+
+	async function toggle(id) {
+		await fetch(`/api/todo/${id}`, {
+			method: 'put'
+		});
+		getTodos();
+	}
+
+	async function remove(id) {
+		await fetch(`/api/todo/${id}`, {
+			method: 'delete'
+		});
+		getTodos();
 	}
 </script>
 
@@ -36,7 +52,11 @@
 <ul>
 	{#each todos as todo}
 		<li class="card-link">
-			<a href="/" class="link">{todo.name}</a>
+			<span class:done={todo.done}>{todo.name}</span>
+			<div>
+				<button class="done" on:click|preventDefault={toggle(todo.id)}>👌</button>
+				<button class="remove" on:click|preventDefault={remove(todo.id)}> 🗑 </button>
+			</div>
 		</li>
 	{/each}
 </ul>
